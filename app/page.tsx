@@ -34,15 +34,21 @@ type ToolInput = Record<string, unknown>;
 
 type SiteTool = {
   name: string;
+  title: string;
   description: string;
   inputSchema: Record<string, unknown>;
-  annotations?: Record<string, boolean>;
-  execute: (input: ToolInput) => unknown | Promise<unknown>;
+  annotations?: {
+    readOnlyHint?: boolean;
+    untrustedContentHint?: boolean;
+  };
+  execute: (input: ToolInput) => unknown;
 };
 
 type ModelContext = {
-  registerTool: (tool: SiteTool) => void | Promise<void>;
-  unregisterTool?: (name: string) => void | Promise<void>;
+  registerTool: (
+    tool: SiteTool,
+    options?: { signal?: AbortSignal },
+  ) => void | Promise<void>;
 };
 
 declare global {
@@ -215,8 +221,9 @@ const TOOL_NAMES = [
   'replace_charging_stop',
 ];
 
-function asString(value: unknown, fallback = '') {
-  return typeof value === 'string' ? value : fallback;
+function asString(value: unknown, fallback = '', maximumLength?: number) {
+  if (typeof value !== 'string') return fallback;
+  return maximumLength ? value.slice(0, maximumLength) : value;
 }
 
 function asNumber(value: unknown, fallback: number) {
@@ -279,6 +286,7 @@ export default function Home() {
     const context = document.modelContext;
     if (typeof context?.registerTool !== 'function') return;
 
+    const lifecycle = new AbortController();
     let cancelled = false;
     const note = (title: string, detail: string) => {
       setActivity({ title, detail });
@@ -287,6 +295,7 @@ export default function Home() {
     const tools: SiteTool[] = [
       {
         name: 'get_trip_context',
+        title: 'Get trip context',
         description:
           'Read the traveler’s current EV trip inputs, preferences, selected route, and charging stops shown on the page.',
         inputSchema: {
@@ -295,7 +304,7 @@ export default function Home() {
           properties: {},
           additionalProperties: false,
         },
-        annotations: { readOnlyHint: true },
+        annotations: { readOnlyHint: true, untrustedContentHint: false },
         execute: () => {
           const state = stateRef.current;
           const vehicle =
@@ -314,6 +323,7 @@ export default function Home() {
       },
       {
         name: 'list_vehicle_profiles',
+        title: 'List vehicle profiles',
         description:
           'List the EV profiles available for route and battery planning, including their estimated range and battery capacity.',
         inputSchema: {
@@ -322,11 +332,12 @@ export default function Home() {
           properties: {},
           additionalProperties: false,
         },
-        annotations: { readOnlyHint: true },
+        annotations: { readOnlyHint: true, untrustedContentHint: false },
         execute: () => ({ vehicles: VEHICLES }),
       },
       {
         name: 'find_chargers',
+        title: 'Find corridor chargers',
         description:
           'Find compatible demo charging stations along the Los Angeles to San Francisco corridor, filtered by power or amenity.',
         inputSchema: {
@@ -342,14 +353,15 @@ export default function Home() {
             amenity: {
               type: 'string',
               description: 'Optional amenity such as coffee, food, restrooms, shopping, lounge, or hotel.',
+              maxLength: 32,
             },
           },
           additionalProperties: false,
         },
-        annotations: { readOnlyHint: true },
+        annotations: { readOnlyHint: true, untrustedContentHint: false },
         execute: (input) => {
           const minimumPower = asNumber(input.minimumPowerKw, 50);
-          const amenity = asString(input.amenity).toLowerCase();
+          const amenity = asString(input.amenity, '', 32).toLowerCase();
           const chargers = CHARGERS.filter(
             (charger) =>
               charger.powerKw >= minimumPower &&
@@ -364,6 +376,7 @@ export default function Home() {
       },
       {
         name: 'compare_route_options',
+        title: 'Compare route options',
         description:
           'Compare the fastest, balanced, and comfort-focused EV route plans with time, distance, cost, arrival charge, and stops.',
         inputSchema: {
@@ -372,7 +385,7 @@ export default function Home() {
           properties: {},
           additionalProperties: false,
         },
-        annotations: { readOnlyHint: true },
+        annotations: { readOnlyHint: true, untrustedContentHint: false },
         execute: () => {
           note(
             'Agent compared 3 routes',
@@ -388,14 +401,23 @@ export default function Home() {
       },
       {
         name: 'create_trip_plan',
+        title: 'Create trip plan',
         description:
           'Create and display a charger-aware trip plan using a selected route style and optional trip inputs. This updates the visible map.',
         inputSchema: {
           type: 'object',
           required: [],
           properties: {
-            origin: { type: 'string', description: 'Trip starting point.' },
-            destination: { type: 'string', description: 'Trip destination.' },
+            origin: {
+              type: 'string',
+              description: 'Trip starting point.',
+              maxLength: 120,
+            },
+            destination: {
+              type: 'string',
+              description: 'Trip destination.',
+              maxLength: 120,
+            },
             routeStyle: {
               type: 'string',
               enum: ['fastest', 'balanced', 'comfort'],
@@ -410,14 +432,15 @@ export default function Home() {
           },
           additionalProperties: false,
         },
-        annotations: { readOnlyHint: false, destructiveHint: false },
+        annotations: { readOnlyHint: false, untrustedContentHint: false },
         execute: (input) => {
           const style = asString(input.routeStyle, 'balanced') as RouteOption['id'];
           const safeStyle = ROUTES[style] ? style : 'balanced';
-          const nextOrigin = asString(input.origin, stateRef.current.origin);
+          const nextOrigin = asString(input.origin, stateRef.current.origin, 120);
           const nextDestination = asString(
             input.destination,
             stateRef.current.destination,
+            120,
           );
           const nextCharge = Math.min(
             100,
@@ -444,6 +467,7 @@ export default function Home() {
       },
       {
         name: 'set_trip_preferences',
+        title: 'Set trip preferences',
         description:
           'Update the EV profile, minimum arrival charge, or amenity preference shown in the planner.',
         inputSchema: {
@@ -468,7 +492,7 @@ export default function Home() {
           },
           additionalProperties: false,
         },
-        annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true },
+        annotations: { readOnlyHint: false, untrustedContentHint: false },
         execute: (input) => {
           const nextVehicle = asString(input.vehicleId, stateRef.current.vehicleId);
           const safeVehicle = VEHICLES.some((vehicle) => vehicle.id === nextVehicle)
@@ -502,6 +526,7 @@ export default function Home() {
       },
       {
         name: 'replace_charging_stop',
+        title: 'Replace charging stop',
         description:
           'Replace one charging stop in the visible itinerary with another compatible corridor charger.',
         inputSchema: {
@@ -522,7 +547,7 @@ export default function Home() {
           },
           additionalProperties: false,
         },
-        annotations: { readOnlyHint: false, destructiveHint: false },
+        annotations: { readOnlyHint: false, untrustedContentHint: false },
         execute: (input) => {
           const stopIndex = Math.floor(asNumber(input.stopIndex, -1));
           const chargerId = asString(input.chargerId);
@@ -557,7 +582,7 @@ export default function Home() {
     void (async () => {
       try {
         for (const tool of tools) {
-          await context.registerTool(tool);
+          await context.registerTool(tool, { signal: lifecycle.signal });
         }
         if (!cancelled) setWebMcpReady(true);
       } catch {
@@ -573,9 +598,7 @@ export default function Home() {
 
     return () => {
       cancelled = true;
-      if (typeof context.unregisterTool === 'function') {
-        for (const name of TOOL_NAMES) void context.unregisterTool(name);
-      }
+      lifecycle.abort();
     };
   }, []);
 
@@ -664,6 +687,7 @@ export default function Home() {
                 <Input
                   className="h-11 rounded-xl bg-background pl-9 text-sm"
                   value={origin}
+                  maxLength={120}
                   onChange={(event) => setOrigin(event.target.value)}
                   aria-label="Starting point"
                 />
@@ -676,6 +700,7 @@ export default function Home() {
                 <Input
                   className="h-11 rounded-xl bg-background pl-9 text-sm"
                   value={destination}
+                  maxLength={120}
                   onChange={(event) => setDestination(event.target.value)}
                   aria-label="Destination"
                 />
@@ -1052,4 +1077,3 @@ export default function Home() {
     </main>
   );
 }
-

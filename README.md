@@ -25,6 +25,8 @@ The top-level page registers seven JavaScript WebMCP tools through `document.mod
 
 Read tools return enough structured state for an agent to explain its recommendations. Write tools reuse the same React state and planner logic as the human interface, so agent actions update the visible itinerary immediately.
 
+Every tool includes a human-readable title, a bounded JSON input schema, current WebMCP annotations, and an `AbortSignal`-owned registration lifecycle. Agent discovery guidance is also available at [`/llms.txt`](https://volt.alx21.chatgpt.site/llms.txt).
+
 ## Built with
 
 Next.js, React, TypeScript, Tailwind CSS, shadcn/ui, Sites, and the JavaScript WebMCP API.
@@ -47,4 +49,3 @@ pnpm build
 ## License
 
 MIT. See [LICENSE](LICENSE).
-

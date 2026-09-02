@@ -1,0 +1,28 @@
+# Volt
+
+> Volt is an agent-native EV trip planner that gives people and AI agents the same visible route-planning state.
+
+- Website: https://volt.alx21.chatgpt.site/
+- Source: https://github.com/agammann/volt-webmcp
+- Demo: https://youtu.be/6pW9oeYl-kY
+
+## WebMCP tools
+
+Volt registers seven page-side tools through `document.modelContext.registerTool`.
+
+Read-only tools:
+
+- `get_trip_context`: Read the current trip, preferences, route, and charging stops.
+- `list_vehicle_profiles`: List the available demo EV profiles.
+- `find_chargers`: Find corridor chargers by charging power or amenity.
+- `compare_route_options`: Compare fastest, balanced, and comfort routes.
+
+State-changing tools:
+
+- `create_trip_plan`: Create a charger-aware plan and update the visible route.
+- `set_trip_preferences`: Change the vehicle, arrival reserve, or amenity preference.
+- `replace_charging_stop`: Replace one stop in the visible itinerary.
+
+## Data and safety
+
+Volt uses realistic sample station, availability, pricing, and vehicle data for a Los Angeles-to-San Francisco demonstration corridor. It does not make reservations, purchases, or vehicle changes. Drivers should verify live charger availability and route conditions before traveling.
