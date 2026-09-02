@@ -1,8 +1,8 @@
-# ChargeRoute
+# Volt
 
-ChargeRoute is an agent-native EV trip planner built for the WebMCP Challenge. It gives people a visual charging itinerary while exposing the route-planning decisions as structured tools an AI agent can use on the same live page.
+Volt is an agent-native EV trip planner built for the WebMCP Challenge. It gives people a visual charging itinerary while exposing the route-planning decisions as structured tools an AI agent can use on the same live page.
 
-**Live demo:** [chargeroute-agent.alx21.chatgpt.site](https://chargeroute-agent.alx21.chatgpt.site)
+**Live demo:** [volt.alx21.chatgpt.site](https://volt.alx21.chatgpt.site)
 
 ## What people and agents can do together
 
@@ -47,3 +47,4 @@ pnpm build
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
