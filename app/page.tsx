@@ -291,6 +291,7 @@ export default function Home() {
           'Read the traveler’s current EV trip inputs, preferences, selected route, and charging stops shown on the page.',
         inputSchema: {
           type: 'object',
+          required: [],
           properties: {},
           additionalProperties: false,
         },
@@ -317,6 +318,7 @@ export default function Home() {
           'List the EV profiles available for route and battery planning, including their estimated range and battery capacity.',
         inputSchema: {
           type: 'object',
+          required: [],
           properties: {},
           additionalProperties: false,
         },
@@ -329,6 +331,7 @@ export default function Home() {
           'Find compatible demo charging stations along the Los Angeles to San Francisco corridor, filtered by power or amenity.',
         inputSchema: {
           type: 'object',
+          required: [],
           properties: {
             minimumPowerKw: {
               type: 'number',
@@ -365,6 +368,7 @@ export default function Home() {
           'Compare the fastest, balanced, and comfort-focused EV route plans with time, distance, cost, arrival charge, and stops.',
         inputSchema: {
           type: 'object',
+          required: [],
           properties: {},
           additionalProperties: false,
         },
@@ -388,6 +392,7 @@ export default function Home() {
           'Create and display a charger-aware trip plan using a selected route style and optional trip inputs. This updates the visible map.',
         inputSchema: {
           type: 'object',
+          required: [],
           properties: {
             origin: { type: 'string', description: 'Trip starting point.' },
             destination: { type: 'string', description: 'Trip destination.' },
@@ -398,6 +403,7 @@ export default function Home() {
             },
             startingChargePercent: {
               type: 'number',
+              description: 'Battery charge percentage at the start of the trip.',
               minimum: 10,
               maximum: 100,
             },
@@ -442,17 +448,23 @@ export default function Home() {
           'Update the EV profile, minimum arrival charge, or amenity preference shown in the planner.',
         inputSchema: {
           type: 'object',
+          required: [],
           properties: {
             vehicleId: {
               type: 'string',
               enum: VEHICLES.map((vehicle) => vehicle.id),
+              description: 'Vehicle profile ID returned by list_vehicle_profiles.',
             },
             minimumArrivalPercent: {
               type: 'number',
+              description: 'Minimum battery percentage the driver wants on arrival.',
               minimum: 5,
               maximum: 50,
             },
-            preferAmenities: { type: 'boolean' },
+            preferAmenities: {
+              type: 'boolean',
+              description: 'Whether charging stops with coffee, food, or restrooms are preferred.',
+            },
           },
           additionalProperties: false,
         },
@@ -505,6 +517,7 @@ export default function Home() {
             chargerId: {
               type: 'string',
               enum: CHARGERS.map((charger) => charger.id),
+              description: 'Replacement charger ID returned by find_chargers.',
             },
           },
           additionalProperties: false,
@@ -1039,3 +1052,4 @@ export default function Home() {
     </main>
   );
 }
+
