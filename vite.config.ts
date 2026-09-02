@@ -43,8 +43,8 @@ export default defineConfig(async () => {
 
   // The lightweight Codex preview avoids starting the separate Workers runtime;
   // production builds still use the Cloudflare plugin below.
-  const isChargeRoutePreview = process.env.CHARGEROUTE_PREVIEW === '1';
-  const cloudflarePlugin = isChargeRoutePreview
+  const isVoltPreview = process.env.VOLT_PREVIEW === '1';
+  const cloudflarePlugin = isVoltPreview
     ? []
     : [
         (await import('@cloudflare/vite-plugin')).cloudflare({
