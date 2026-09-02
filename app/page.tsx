@@ -614,7 +614,7 @@ export default function Home() {
             <Route className="size-[18px]" strokeWidth={2.4} />
           </div>
           <div>
-            <p className="text-[15px] font-semibold tracking-[-0.02em]">ChargeRoute</p>
+            <p className="text-[15px] font-semibold tracking-[-0.02em]">Volt</p>
             <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
               EV trip intelligence
             </p>
@@ -1026,12 +1026,12 @@ export default function Home() {
       <section className="border-t border-border bg-[#102d24] px-5 py-12 text-white lg:px-8">
         <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-[1.1fr_1fr] md:items-center">
           <div>
-            <Badge className="bg-emerald-200/10 text-emerald-200">Why ChargeRoute</Badge>
+            <Badge className="bg-emerald-200/10 text-emerald-200">Why Volt</Badge>
             <h2 className="mt-4 max-w-xl text-3xl font-semibold tracking-[-0.04em]">
               A map for people. Structured actions for agents.
             </h2>
             <p className="mt-3 max-w-xl text-sm leading-6 text-white/65">
-              Traditional route planners make agents click through brittle interfaces. ChargeRoute exposes the decisions that matter—range, chargers, route tradeoffs, and stops—as explicit WebMCP tools.
+              Traditional route planners make agents click through brittle interfaces. Volt exposes the decisions that matter—range, chargers, route tradeoffs, and stops—as explicit WebMCP tools.
             </p>
           </div>
           <div className="grid grid-cols-3 gap-2">
