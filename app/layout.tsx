@@ -13,12 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://chargeroute-agent.alx21.chatgpt.site'),
-  title: 'ChargeRoute — EV trip intelligence',
+  metadataBase: new URL('https://volt.alx21.chatgpt.site'),
+  title: 'Volt — EV trip intelligence',
   description:
     'Plan charger-aware EV road trips with an agent that understands range, speed, amenities, and arrival goals.',
   openGraph: {
-    title: 'ChargeRoute — EV trip intelligence',
+    title: 'Volt — EV trip intelligence',
     description: 'EV trip intelligence, built for people and agents.',
     type: 'website',
     images: [
@@ -26,13 +26,13 @@ export const metadata: Metadata = {
         url: '/og.png',
         width: 1200,
         height: 630,
-        alt: 'ChargeRoute — EV trip intelligence, built for people and agents.',
+        alt: 'Volt — EV trip intelligence, built for people and agents.',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ChargeRoute — EV trip intelligence',
+    title: 'Volt — EV trip intelligence',
     description: 'EV trip intelligence, built for people and agents.',
     images: ['/og.png'],
   },
@@ -51,3 +51,4 @@ export default function RootLayout({
     </html>
   );
 }
+
