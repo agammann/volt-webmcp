@@ -1,5 +1,5 @@
 {
-  "name": "chargeroute",
+  "name": "volt",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -53,3 +53,4 @@
   },
   "type": "module"
 }
+
