@@ -244,9 +244,11 @@ export function simulate(
   const vehicle = VEHICLES.find((item) => item.id === state.vehicleId)!;
   const chargers = ids.map((id) => CHARGERS.find((item) => item.id === id)!);
   const firstLeg = chargers[0]?.mile ?? ASSUMPTIONS.distanceMiles;
-  const requiredStartPercent = round(
-    (firstLeg / vehicle.range) * 100 + state.minimumArrivalPercent,
-  );
+  // Round up to the form's 0.1% step so the suggested minimum is sufficient.
+  const requiredStartPercent =
+    Math.ceil(
+      ((firstLeg / vehicle.range) * 100 + state.minimumArrivalPercent) * 10,
+    ) / 10;
   const result: Plan = {
     style,
     feasible: false,

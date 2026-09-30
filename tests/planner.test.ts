@@ -59,6 +59,21 @@ describe('energy calculations', () => {
       }
     },
   );
+  it('displayed minimum charge is sufficient at the form precision', () => {
+    for (const vehicle of VEHICLES) {
+      const state = {
+        ...DEFAULT_STATE,
+        vehicleId: vehicle.id,
+        minimumArrivalPercent: 25,
+        startingChargePercent: 10,
+      };
+      const required = currentPlan(state).requiredStartPercent;
+      expect(required - (35 / vehicle.range) * 100).toBeGreaterThanOrEqual(25);
+      expect(
+        currentPlan({ ...state, startingChargePercent: required }).feasible,
+      ).toBe(true);
+    }
+  });
   it('higher starting charge reduces purchased energy and cost for the same stop', () => {
     const a = simulate(DEFAULT_STATE, ['kettleman-city']);
     const b = simulate({ ...DEFAULT_STATE, startingChargePercent: 90 }, [
