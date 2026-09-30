@@ -1,28 +1,30 @@
 # Volt
 
-> Volt is an agent-native EV trip planner that gives people and AI agents the same visible route-planning state.
+An EV energy and charging simulator with seven page-side WebMCP tools.
+Website: https://volt.alx21.chatgpt.site/
+Source and full model: https://github.com/agammann/volt-webmcp
 
-- Website: https://volt.alx21.chatgpt.site/
-- Source: https://github.com/agammann/volt-webmcp
-- Demo: https://youtu.be/6pW9oeYl-kY
+SIMULATION ONLY: fixed 387-mile Los Angeles to San Francisco corridor, four generic vehicle profiles, and six fictional stations. No verified station locations, live availability, connector checks, navigation, traffic, weather, or measured charging curves. Not for planning real journeys.
 
-## WebMCP tools
+Tools register via document.modelContext.registerTool in a compatible browser/agent host. This is not a remote MCP server. Manual controls work without WebMCP.
 
-Volt registers seven page-side tools through `document.modelContext.registerTool`.
+Read/compare tools (may update the visible view):
+- get_trip_context: applied inputs, current plan, and assumptions.
+- list_vehicle_profiles: generic range, capacity, and peak-power assumptions.
+- find_chargers: optional minimumPowerKw (50-400) and amenity; displays matching cards.
+- compare_route_options: fastest, balanced, and comfort for applied inputs.
 
-Read-only tools:
+Tools that update locally saved settings:
+- create_trip_plan: optional supported origin/destination, routeStyle, startingChargePercent (10-100). Clears custom stops.
+- set_trip_preferences: optional vehicleId, minimumArrivalPercent (5-50), preferAmenities boolean. Recalculates and retains custom stops.
+- replace_charging_stop: required zero-based stopIndex and known chargerId. Rejects invalid or infeasible sequences without changing state.
 
-- `get_trip_context`: Read the current trip, preferences, route, and charging stops.
-- `list_vehicle_profiles`: List the available demo EV profiles.
-- `find_chargers`: Find corridor chargers by charging power or amenity.
-- `compare_route_options`: Compare fastest, balanced, and comfort routes.
+Profiles: compact, long-range, crossover, large-suv.
+Styles: fastest, balanced, comfort.
+Amenities: coffee, restrooms, food, shopping, lounge, hotel.
+Use tool results for station IDs. Unknown fields and invalid inputs return ok:false.
+Successful results include dataMode:SIMULATION, methodology:volt-energy-v1, assumptions, limitations, and data. A successful planning call can apply infeasible inputs: always inspect data.plan.feasible before describing results. Infeasible plans have null time/cost/arrival totals.
 
-State-changing tools:
+Every leg must meet the selected reserve. Charging assumes 90% efficiency and 60% of the lower vehicle/station peak power. Time assumes 60 mph plus charging and five minutes per stop. Cost covers purchased stop electricity only. Full formulas and route objective weights appear in the README and How it works view.
 
-- `create_trip_plan`: Create a charger-aware plan and update the visible route.
-- `set_trip_preferences`: Change the vehicle, arrival reserve, or amenity preference.
-- `replace_charging_stop`: Replace one stop in the visible itinerary.
-
-## Data and safety
-
-Volt uses realistic sample station, availability, pricing, and vehicle data for a Los Angeles-to-San Francisco demonstration corridor. It does not make reservations, purchases, or vehicle changes. Drivers should verify live charger availability and route conditions before traveling.
+Applied settings persist only in this browser. Export JSON includes inputs, results, and limitations; import and tab synchronization are not supported. Nothing is booked or sent to a charging provider.
