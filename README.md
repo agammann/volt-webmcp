@@ -56,6 +56,21 @@ These envelopes illustrate the sequence; use your host's actual invocation API. 
 
 Successful responses include `dataMode: "SIMULATION"`, model assumptions, limitations, and `data`. Four tools have read-only annotations (finding/comparing may change the visible view); three persist local settings. Registration is owned by an abort signal, retries briefly for a late host, and restarts on a restored page lifecycle.
 
+### Verified browser compatibility
+
+Native discovery and all seven tool calls were verified against the published site on **September 30, 2026**:
+
+| Browser / host                                          | Verified behavior                                                                                                                                                                                                               |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chrome 154.0.8037.93 on Windows, WebMCP testing enabled | Native discovery and execution, visible results, invalid-input preservation, reload persistence, and actual back/forward cache restoration                                                                                      |
+| Edge 154.0.4258.48 on Windows, WebMCP testing enabled   | The same four native integration tests passed                                                                                                                                                                                   |
+| Codex in-app browser agent                              | Discovered and invoked all seven tools through the connected browser's WebMCP interface; the documented planning sequence, station filtering, stop replacement, error preservation, and refreshed discovery after reload worked |
+| Chrome 154 with WebMCP testing disabled                 | Manual mode displayed and the normal controls remained available                                                                                                                                                                |
+
+To try native discovery in Chrome, enable `chrome://flags/#enable-webmcp-testing`, relaunch, and reload Volt. The page should report **7 agent tools ready**. See the [Chrome WebMCP setup guide](https://developer.chrome.com/docs/ai/webmcp) for current browser requirements. Compatibility with other browsers and agent hosts needs its own verification.
+
+Chrome 154's `document.modelContext.executeTool` takes JSON-stringified arguments and returns a JSON string for these tools. Chrome's [imperative API documentation](https://developer.chrome.com/docs/ai/webmcp/imperative-api) describes the object-argument change in Chrome 155. The native test helper selects the argument form by Chrome major version; the verified version above uses the string form.
+
 ## Calculation model
 
 Model version: **volt-energy-v1**. All values are assumptions, including station mile positions and electricity prices. Every sample charger is assumed available and compatible.
@@ -101,10 +116,16 @@ pnpm test
 pnpm build
 pnpm exec playwright install chromium
 pnpm test:e2e
+pnpm exec playwright install chrome
+pnpm test:webmcp
 pnpm security:audit
 ```
 
-Unit tests cover numerical results, energy/reserve limits, invalid inputs, persistence, and the tool contract. Browser tests exercise recalculation, unfinished-edit preservation when choosing a route style, error preservation, stop replacement, filtering, export, blocked storage, desktop/mobile layouts, and an explicitly mocked registration lifecycle. Mocked tests do not establish native WebMCP compatibility; verify discovery, calls, and visible-state updates separately in a compatible host. CI runs these checks on each push and pull request.
+Unit tests cover numerical results, energy/reserve limits, invalid inputs, persistence, and the tool contract. Browser tests exercise recalculation, unfinished-edit preservation when choosing a route style, error preservation, stop replacement, filtering, export, blocked storage, desktop/mobile layouts, and an explicitly mocked registration lifecycle.
+
+`pnpm test:webmcp` runs a separate four-test suite in installed Chrome with `--enable-features=WebMCP`. It starts the production preview and uses the browser's native `getTools` and `executeTool` methods, without injecting a registration shim. Missing native support fails the suite. It checks all seven schemas and calls, visible state changes, 18 invalid calls, explicit infeasibility, persistence, abort cleanup, reload, and actual back/forward cache restoration. Browser versions are attached to the test results. CI installs Chrome and runs this suite as well as the existing checks on each push and pull request.
+
+Set `VOLT_WEBMCP_URL` to an existing deployment URL to run the same suite against it; no local preview is started. Each test uses an isolated browser context, so its saved settings do not affect your regular browser profile. Set `VOLT_WEBMCP_CHANNEL=msedge` to use installed Edge. The live-site run records whether back/forward cache restoration occurred; the local production-preview run requires it. These environment variables can be set in your shell before running `pnpm test:webmcp`.
 
 Built with React, TypeScript, Vite, and lucide-react. `src/planner.ts` owns the model; `src/webmcp.ts` owns the tool contract; `src/storage.ts` handles versioned local settings; `src/App.tsx` owns the interface. `scripts/prepare-sites.mjs` packages static assets into a Worker; `scripts/verify-sites-build.mjs` checks the production response contract.
 
