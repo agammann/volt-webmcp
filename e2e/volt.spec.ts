@@ -53,6 +53,44 @@ test('recalculates inputs, persists, rejects unsupported endpoints and exports a
     state: { startingChargePercent: 90, destination: 'San Francisco, CA' },
   });
 });
+test('route cards use applied inputs and preserve unfinished edits', async ({
+  page,
+}) => {
+  await page.getByLabel('Vehicle profile').selectOption('compact');
+  await page
+    .getByLabel('Starting battery percentage', { exact: true })
+    .fill('90');
+  await page.getByLabel('Destination', { exact: true }).fill('San Diego');
+  await page.getByTestId('route-fastest').click();
+  await expect(page.getByTestId('plan-summary')).toContainText('Fastest');
+  await expect(page.getByTestId('plan-summary')).toContainText('$21.72');
+  await expect(page.getByRole('alert')).toHaveCount(0);
+  await expect(page.getByLabel('Vehicle profile')).toHaveValue('compact');
+  await expect(
+    page.getByLabel('Starting battery percentage', { exact: true }),
+  ).toHaveValue('90');
+  await expect(page.getByLabel('Destination', { exact: true })).toHaveValue(
+    'San Diego',
+  );
+  await expect(
+    page.getByText('Inputs changed.', { exact: false }),
+  ).toBeVisible();
+  await page
+    .getByLabel('Destination', { exact: true })
+    .fill('San Francisco, CA');
+  await page.getByRole('button', { name: 'Build my route' }).click();
+  await expect(page.getByText('60 kWh · 240 mi assumed range')).toBeVisible();
+  await expect(page.getByText('Inputs changed.', { exact: false })).toHaveCount(
+    0,
+  );
+  await page.reload();
+  await expect(page.getByTestId('plan-summary')).toContainText('Fastest');
+  await expect(page.getByLabel('Vehicle profile')).toHaveValue('compact');
+  await expect(
+    page.getByLabel('Starting battery percentage', { exact: true }),
+  ).toHaveValue('90');
+});
+
 test('profile, reserve and infeasible inputs affect real results', async ({
   page,
 }) => {
