@@ -69,10 +69,18 @@ export default function App() {
   const vehicle = VEHICLES.find((v) => v.id === state.vehicleId)!;
   const selected = CHARGERS.find((s) => s.id === selectedId)!;
   const dirty = JSON.stringify(draft) !== JSON.stringify(toDraft(state));
-  function apply(next: TripState, text: string) {
+  function apply(next: TripState, text: string, preserveDraft = false) {
     stateRef.current = next;
     setState(next);
-    setDraft(toDraft(next));
+    setDraft((previous) =>
+      preserveDraft
+        ? {
+            ...previous,
+            routeStyle: next.routeStyle,
+            customStopIds: next.customStopIds,
+          }
+        : toDraft(next),
+    );
     setError('');
     setMessage(text);
     try {
@@ -142,14 +150,14 @@ export default function App() {
       window.removeEventListener('pageshow', restore);
     };
   }, []);
-  function build(event?: FormEvent, style: Style = state.routeStyle) {
-    event?.preventDefault();
+  function build(event: FormEvent) {
+    event.preventDefault();
     try {
       const next = validateState({
         ...draft,
         startingChargePercent: Number(draft.startingChargePercent),
         minimumArrivalPercent: Number(draft.minimumArrivalPercent),
-        routeStyle: style,
+        routeStyle: state.routeStyle,
         customStopIds: null,
       });
       apply(next, 'Trip recalculated from your inputs.');
@@ -157,6 +165,13 @@ export default function App() {
     } catch (reason) {
       setError((reason as Error).message);
     }
+  }
+  function selectRoute(style: Style) {
+    apply(
+      { ...stateRef.current, routeStyle: style, customStopIds: null },
+      'Route style changed using your applied inputs.',
+      true,
+    );
   }
   function replace(index: number, id: string) {
     try {
@@ -347,7 +362,7 @@ export default function App() {
           {dirty && (
             <p className="notice">
               Inputs changed. Build the route to apply them; results show the
-              previous plan.
+              applied inputs. Route styles use those applied inputs too.
             </p>
           )}
           {error && (
@@ -403,7 +418,7 @@ export default function App() {
                     aria-pressed={
                       state.routeStyle === option.style && !state.customStopIds
                     }
-                    onClick={() => build(undefined, option.style)}
+                    onClick={() => selectRoute(option.style)}
                     className={
                       state.routeStyle === option.style && !state.customStopIds
                         ? 'selected'

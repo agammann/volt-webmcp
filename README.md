@@ -8,11 +8,17 @@
 
 Volt uses **four generic vehicle profiles, six fictional stations, and a fixed 387-mile Los Angeles → San Francisco sample corridor**. It is useful for exploring model tradeoffs and building browser-agent integrations. It provides no live station data, verified connector compatibility, directions, or dependable driving ETA. Do not use it to plan an actual journey.
 
+## What you can learn from Volt
+
+- Explore how starting charge, reserve, and vehicle assumptions affect purchased energy, stop choices, and cost.
+- Study a small React app whose manual controls and browser-agent tools use the same validation and calculations.
+- Fork the simulator to experiment with different sample vehicle profiles, stations, or route objectives. The model and its limits are documented below.
+
 ## Try it
 
-1. Open the site in a modern browser. Manual controls work without WebMCP support.
+1. Open the site in a modern browser. Manual controls work without WebMCP support. If you have used Volt before, click **Reset settings** to begin with the default sample.
 2. Leave the sample endpoints in place, choose a vehicle profile, and set starting charge and reserve. Click **Build my route** to apply changes.
-3. Compare **Fastest**, **Balanced**, and **Comfort**. Each selects stops with a different objective. The results may use the same stations.
+3. Compare **Fastest**, **Balanced**, and **Comfort**. Each selects stops with a different objective using the applied inputs. Clicking a style preserves unfinished form edits; click **Build my route** to apply those edits. The results may use the same stations.
 4. Inspect map markers or change a stop in the itinerary. An unreachable, duplicate, backward, or unnecessary replacement is rejected without changing the applied plan.
 5. Use **Stations** to filter sample stations by rated power and amenities. Use **How it works** to read the assumptions.
 6. Export a JSON snapshot containing the inputs, results, and limitations. Applied settings persist in this browser; **Reset settings** restores the default sample.
@@ -68,9 +74,11 @@ There is no traffic, weather, elevation, degradation, detour calculation, or mea
 
 ## Run locally
 
-Requirements: **Node.js 24+** and **pnpm 11.19.0**. No API keys, account, database, or charging-provider credentials are needed.
+Requirements: **Git**, **Node.js 24+**, and **pnpm 11.19.0**. The package manager version is pinned in `package.json`; see the [pnpm installation guide](https://pnpm.io/installation) if you need to install it. No API keys, account, database, or charging-provider credentials are needed.
 
 ```bash
+git clone https://github.com/agammann/volt-webmcp.git
+cd volt-webmcp
 pnpm install --frozen-lockfile
 pnpm dev
 ```
@@ -96,9 +104,19 @@ pnpm test:e2e
 pnpm security:audit
 ```
 
-Unit tests cover numerical results, energy/reserve limits, invalid inputs, persistence, and the tool contract. Browser tests exercise recalculation, error preservation, stop replacement, filtering, export, blocked storage, desktop/mobile layouts, and an explicitly mocked registration lifecycle. Mocked tests do not establish native WebMCP compatibility; verify discovery, calls, and visible-state updates separately in a compatible host. CI runs these checks on each push and pull request.
+Unit tests cover numerical results, energy/reserve limits, invalid inputs, persistence, and the tool contract. Browser tests exercise recalculation, unfinished-edit preservation when choosing a route style, error preservation, stop replacement, filtering, export, blocked storage, desktop/mobile layouts, and an explicitly mocked registration lifecycle. Mocked tests do not establish native WebMCP compatibility; verify discovery, calls, and visible-state updates separately in a compatible host. CI runs these checks on each push and pull request.
 
 Built with React, TypeScript, Vite, and lucide-react. `src/planner.ts` owns the model; `src/webmcp.ts` owns the tool contract; `src/storage.ts` handles versioned local settings; `src/App.tsx` owns the interface. `scripts/prepare-sites.mjs` packages static assets into a Worker; `scripts/verify-sites-build.mjs` checks the production response contract.
+
+## Make it your own
+
+Start with one small experiment, then run the checks above:
+
+- **Change a sample profile or electricity price:** edit `VEHICLES` or `CHARGERS` in [src/planner.ts](src/planner.ts). Keep stations in forward mile order within the sample corridor. Recalculate and compare the model outputs; update tests and documented examples if their assumptions change.
+- **Try a different tradeoff:** change `objective` in [src/planner.ts](src/planner.ts). Scoring weights choose a plan; they do not add time to its reported duration.
+- **Build a browser-agent interaction:** follow the schemas in [src/webmcp.ts](src/webmcp.ts) and the sequence above. Read the applied state after each change, and check `plan.feasible` before presenting totals.
+
+Changing the corridor requires updating the endpoint validation, distance, station positions, and map together. Any new data source needs its own availability and compatibility checks before the app can make real-world claims.
 
 ## Hosting and storage
 
