@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.2
+
+October 7, 2026
+
+- Serve HTML with `Cache-Control: no-transform` so intermediaries preserve the application document and its existing content security policy.
+- Verify HTML response headers over the real local HTTP server; asset caching, the client, calculations and saved settings remain unchanged.
+
 ## 1.0.1
 
 October 6, 2026

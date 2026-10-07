@@ -21,6 +21,25 @@ if (
   );
 }
 
+if (
+  rootResponse.headers.get('cache-control') !==
+  'public, max-age=0, must-revalidate, no-transform'
+) {
+  throw new Error(
+    'HTML must retain no-transform without changing cache lifetime.',
+  );
+}
+if (
+  !rootResponse.headers
+    .get('content-security-policy')
+    ?.includes("script-src 'self'") ||
+  rootResponse.headers
+    .get('content-security-policy')
+    ?.includes("script-src 'self' 'unsafe-inline'")
+) {
+  throw new Error('HTML must preserve the script content security policy.');
+}
+
 const discoveryFiles = [
   ['/llms.txt', 'text/plain', '# Volt'],
   [

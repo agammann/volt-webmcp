@@ -281,3 +281,34 @@ test('desktop and mobile layout and manual fallback', async ({ page }) => {
       fullPage: true,
     });
 });
+
+test('HTTP HTML preserves the application document policy and static asset caching', async ({
+  page,
+  request,
+}) => {
+  for (const method of ['GET', 'HEAD'] as const) {
+    const response = await request.fetch('/', { method });
+    expect(response.status()).toBe(200);
+    expect(response.headers()['cache-control']).toBe(
+      'public, max-age=0, must-revalidate, no-transform',
+    );
+    expect(response.headers()['content-security-policy']).toContain(
+      "script-src 'self'",
+    );
+    expect(response.headers()['content-security-policy']).not.toContain(
+      "script-src 'self' 'unsafe-inline'",
+    );
+    if (method === 'HEAD') expect(await response.body()).toHaveLength(0);
+  }
+  const direct = await request.get('/index.html');
+  expect(direct.headers()['cache-control']).toBe(
+    'public, max-age=0, must-revalidate, no-transform',
+  );
+  const script = await page.locator('script[src]').first().getAttribute('src');
+  expect(script).toMatch(/^\/assets\//);
+  const asset = await request.get(script!);
+  expect(asset.status()).toBe(200);
+  expect(asset.headers()['cache-control']).toBe(
+    'public, max-age=31536000, immutable',
+  );
+});

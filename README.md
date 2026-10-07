@@ -8,7 +8,7 @@
 
 Volt uses **four generic vehicle profiles, six fictional stations, and a fixed 387-mile Los Angeles → San Francisco sample corridor**. It is useful for exploring model tradeoffs and building browser-agent integrations. It provides no live station data, verified connector compatibility, directions, or dependable driving ETA. Do not use it to plan an actual journey.
 
-Source version **1.0.1** retains the `volt-energy-v1` model, seven-tool contract and `volt-trip-v1` applied settings. See [stability, upgrade and recovery guidance](docs/STABILITY.md). The source delivery includes the MIT license, frozen lockfile and SHA256 checksums; hosted acceptance is checked separately.
+Source version **1.0.2** retains the `volt-energy-v1` model, seven-tool contract and `volt-trip-v1` applied settings. See [stability, upgrade and recovery guidance](docs/STABILITY.md). The source delivery includes the MIT license, frozen lockfile and SHA256 checksums; hosted acceptance is checked separately.
 
 ## What you can learn from Volt
 
@@ -95,14 +95,14 @@ There is no traffic, weather, elevation, degradation, detour calculation, or mea
 
 Requirements: **Node.js 24+** and **pnpm 11.19.0**; Git is needed for a source checkout. The package manager version is pinned in `package.json`; see the [pnpm installation guide](https://pnpm.io/installation) if you need to install it. No API keys, account, database, or charging-provider credentials are needed.
 
-For the pinned source delivery, download `volt_1.0.1_source.zip` and its checksums from the [1.0.1 release](https://github.com/agammann/volt-webmcp/releases/tag/v1.0.1). Verify SHA256 before extracting: PowerShell `Get-FileHash volt_1.0.1_source.zip -Algorithm SHA256`, or Linux `sha256sum -c SHA256SUMS`. Enter the extracted `volt-1.0.1` directory, run `pnpm install --frozen-lockfile`, then `pnpm dev`.
+For the pinned source delivery, download `volt_1.0.2_source.zip` and its checksums from the [1.0.2 release](https://github.com/agammann/volt-webmcp/releases/tag/v1.0.2). Verify SHA256 before extracting: PowerShell `Get-FileHash volt_1.0.2_source.zip -Algorithm SHA256`, or Linux `sha256sum -c SHA256SUMS`. Enter the extracted `volt-1.0.2` directory, run `pnpm install --frozen-lockfile`, then `pnpm dev`.
 
 To use the matching source tag:
 
 ```bash
 git clone https://github.com/agammann/volt-webmcp.git
 cd volt-webmcp
-git checkout v1.0.1
+git checkout v1.0.2
 pnpm install --frozen-lockfile
 pnpm dev
 ```

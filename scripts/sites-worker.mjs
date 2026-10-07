@@ -26,7 +26,9 @@ function responseFor(asset, requestMethod, requestPath) {
     'Cache-Control',
     requestPath.startsWith('/assets/')
       ? 'public, max-age=31536000, immutable'
-      : 'public, max-age=0, must-revalidate',
+      : asset.contentType.startsWith('text/html')
+        ? 'public, max-age=0, must-revalidate, no-transform'
+        : 'public, max-age=0, must-revalidate',
   );
 
   return new Response(requestMethod === 'HEAD' ? null : decodeBase64(asset.body), { headers });

@@ -2,7 +2,7 @@
 
 ## Supported scope
 
-Volt 1.0.1 explores fictional energy, charging-time and electricity-cost tradeoffs for four generic vehicle profiles, six sample stations and the fixed 387-mile Los Angeles to San Francisco corridor. `volt-energy-v1` is the documented deterministic model. Its current equations, constants, scoring objectives and rounding rules are part of this bounded v1 contract. It supplies no actual route directions, station availability, connector compatibility or dependable driving ETA.
+Volt 1.0.2 explores fictional energy, charging-time and electricity-cost tradeoffs for four generic vehicle profiles, six sample stations and the fixed 387-mile Los Angeles to San Francisco corridor. `volt-energy-v1` is the documented deterministic model. Its current equations, constants, scoring objectives and rounding rules are part of this bounded v1 contract. It supplies no actual route directions, station availability, connector compatibility or dependable driving ETA.
 
 The source requires Node.js 24+ and pnpm 11.19.0. The source targets Windows and Linux; release CI checks Linux, and local acceptance checks Windows. Ordinary Chrome 155.0.8059.39 was measured on Windows; manual controls also remain available when WebMCP is absent. The optional native integration is experimental and limited to the browser/API combinations actually measured. Historical Chrome/Edge 154 records are dated in the README; Chrome 155 uses object arguments. A different host needs its own native check.
 
@@ -16,7 +16,7 @@ Invalid saved settings fall back to defaults with a visible warning; **Reset set
 
 ## Upgrade from source version 1.0.0
 
-Install the pinned 1.0.1 ZIP or tag and use the same deployment origin to retain saved settings. The `volt-trip-v1` format and `volt-energy-v1` model are unchanged; this release introduces no settings migration. Export a snapshot first, keep the prior source if rollback is needed, and rebuild/serve from a clean installation. A source update and a hosted deployment have separate delivery checks.
+Install the pinned 1.0.2 ZIP or tag and use the same deployment origin to retain saved settings. The `volt-trip-v1` format and `volt-energy-v1` model are unchanged; this release introduces no settings migration. Export a snapshot first, keep the prior source if rollback is needed, and rebuild/serve from a clean installation. A source update and a hosted deployment have separate delivery checks.
 
 ## Tools and releases
 
