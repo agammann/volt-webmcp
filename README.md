@@ -8,6 +8,8 @@
 
 Volt uses **four generic vehicle profiles, six fictional stations, and a fixed 387-mile Los Angeles → San Francisco sample corridor**. It is useful for exploring model tradeoffs and building browser-agent integrations. It provides no live station data, verified connector compatibility, directions, or dependable driving ETA. Do not use it to plan an actual journey.
 
+Source version **1.0.1** retains the `volt-energy-v1` model, seven-tool contract and `volt-trip-v1` applied settings. See [stability, upgrade and recovery guidance](docs/STABILITY.md). The source delivery includes the MIT license, frozen lockfile and SHA256 checksums; hosted acceptance is checked separately.
+
 ## What you can learn from Volt
 
 - Explore how starting charge, reserve, and vehicle assumptions affect purchased energy, stop choices, and cost.
@@ -69,7 +71,9 @@ Native discovery and all seven tool calls were verified against the published si
 
 To try native discovery in Chrome, enable `chrome://flags/#enable-webmcp-testing`, relaunch, and reload Volt. The page should report **7 agent tools ready**. See the [Chrome WebMCP setup guide](https://developer.chrome.com/docs/ai/webmcp) for current browser requirements. Compatibility with other browsers and agent hosts needs its own verification.
 
-Chrome 154's `document.modelContext.executeTool` takes JSON-stringified arguments and returns a JSON string for these tools. Chrome's [imperative API documentation](https://developer.chrome.com/docs/ai/webmcp/imperative-api) describes the object-argument change in Chrome 155. The native test helper selects the argument form by Chrome major version; the verified version above uses the string form.
+Chrome 154's `document.modelContext.executeTool` takes JSON-stringified arguments and returns a JSON string for these tools. Chrome's [imperative API documentation](https://developer.chrome.com/docs/ai/webmcp/imperative-api) describes the object-argument change in Chrome 155. The native test helper selects the argument form by Chrome major version and executes each call once; the historical versions above use the string form.
+
+Local source checks on October 6, 2026 used Windows, Node.js **24.19.0**, pnpm **11.19.0**, Playwright **1.58.2** and Chrome **155.0.8059.39**. All 32 unit cases, eight ordinary browser cases and four real native cases passed, including all seven tools, invalid-input preservation, reload and actual back/forward cache restoration. Independent hand-calculated fixtures checked 72 numerical values across all four profiles, the documented 78% and 90% examples, and an infeasible case. These are local simulator checks; a published source archive and public deployment need their own exact-delivery acceptance.
 
 ## Calculation model
 
@@ -89,11 +93,16 @@ There is no traffic, weather, elevation, degradation, detour calculation, or mea
 
 ## Run locally
 
-Requirements: **Git**, **Node.js 24+**, and **pnpm 11.19.0**. The package manager version is pinned in `package.json`; see the [pnpm installation guide](https://pnpm.io/installation) if you need to install it. No API keys, account, database, or charging-provider credentials are needed.
+Requirements: **Node.js 24+** and **pnpm 11.19.0**; Git is needed for a source checkout. The package manager version is pinned in `package.json`; see the [pnpm installation guide](https://pnpm.io/installation) if you need to install it. No API keys, account, database, or charging-provider credentials are needed.
+
+For the pinned source delivery, download `volt_1.0.1_source.zip` and its checksums from the [1.0.1 release](https://github.com/agammann/volt-webmcp/releases/tag/v1.0.1). Verify SHA256 before extracting: PowerShell `Get-FileHash volt_1.0.1_source.zip -Algorithm SHA256`, or Linux `sha256sum -c SHA256SUMS`. Enter the extracted `volt-1.0.1` directory, run `pnpm install --frozen-lockfile`, then `pnpm dev`.
+
+To use the matching source tag:
 
 ```bash
 git clone https://github.com/agammann/volt-webmcp.git
 cd volt-webmcp
+git checkout v1.0.1
 pnpm install --frozen-lockfile
 pnpm dev
 ```
@@ -123,9 +132,11 @@ pnpm security:audit
 
 Unit tests cover numerical results, energy/reserve limits, invalid inputs, persistence, and the tool contract. Browser tests exercise recalculation, unfinished-edit preservation when choosing a route style, error preservation, stop replacement, filtering, export, blocked storage, desktop/mobile layouts, and an explicitly mocked registration lifecycle.
 
-`pnpm test:webmcp` runs a separate four-test suite in installed Chrome with `--enable-features=WebMCP`. It starts the production preview and uses the browser's native `getTools` and `executeTool` methods, without injecting a registration shim. Missing native support fails the suite. It checks all seven schemas and calls, visible state changes, 18 invalid calls, explicit infeasibility, persistence, abort cleanup, reload, and actual back/forward cache restoration. Browser versions are attached to the test results. CI installs Chrome and runs this suite as well as the existing checks on each push and pull request.
+`pnpm test:webmcp` runs a separate four-test suite in installed Chrome with `--enable-features=WebMCP`. It starts the production preview and uses the browser's native `getTools` and `executeTool` methods, without injecting a registration shim. Missing native support fails the suite. It checks all seven schemas and calls, visible state changes, 18 invalid calls, explicit infeasibility, persistence, abort cleanup, reload, and actual back/forward cache restoration. Browser versions are attached to the test results. CI installs Chrome and runs this suite as well as the existing checks on main pushes, pull requests and manual runs.
 
 Set `VOLT_WEBMCP_URL` to an existing deployment URL to run the same suite against it; no local preview is started. Each test uses an isolated browser context, so its saved settings do not affect your regular browser profile. Set `VOLT_WEBMCP_CHANNEL=msedge` to use installed Edge. The live-site run records whether back/forward cache restoration occurred; the local production-preview run requires it. These environment variables can be set in your shell before running `pnpm test:webmcp`.
+
+The dependency gate uses the full audit at every severity, with no advisory exception. Source release packaging requires a clean committed checkout and verifies the actual ZIP through a fresh installation, production build and ordinary/native suites before uploading it. `pnpm package:release` creates the ZIP and checksums; `python scripts/unpack-release.py --out ../volt-clean-consumer` additionally compares every tracked source byte and extracts an isolated consumer (Python 3.11+).
 
 Built with React, TypeScript, Vite, and lucide-react. `src/planner.ts` owns the model; `src/webmcp.ts` owns the tool contract; `src/storage.ts` handles versioned local settings; `src/App.tsx` owns the interface. `scripts/prepare-sites.mjs` packages static assets into a Worker; `scripts/verify-sites-build.mjs` checks the production response contract.
 
@@ -148,3 +159,5 @@ Settings use this origin's `localStorage` key `volt-trip-v1`. Invalid saved data
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+See [contributing](CONTRIBUTING.md), [security](SECURITY.md) and [release changes](CHANGELOG.md).
