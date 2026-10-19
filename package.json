@@ -21,7 +21,7 @@
     "package:release": "node scripts/package-release.mjs"
   },
   "dependencies": {
-    "react": "19.2.8",
+    "react": "19.3.1",
     "react-dom": "19.2.8",
     "lucide-react": "1.31.0"
   },
@@ -30,7 +30,7 @@
     "@playwright/test": "1.58.2",
     "@tailwindcss/postcss": "4.2.1",
     "@types/node": "22.19.19",
-    "@types/react": "19.2.14",
+    "@types/react": "19.3.0",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.1.1",
     "oxfmt": "0.61.0",
