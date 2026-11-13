@@ -93,7 +93,7 @@ There is no traffic, weather, elevation, degradation, detour calculation, or mea
 
 ## Run locally
 
-Requirements: **Node.js 24+** and **pnpm 11.19.0**; Git is needed for a source checkout. The package manager version is pinned in `package.json`; see the [pnpm installation guide](https://pnpm.io/installation) if you need to install it. No API keys, account, database, or charging-provider credentials are needed.
+Requirements: **Node.js 24.x or 26+** and **pnpm 11.19.0**; Git is needed for a source checkout. The package manager version is pinned in `package.json`; see the [pnpm installation guide](https://pnpm.io/installation) if you need to install it. No API keys, account, database, or charging-provider credentials are needed.
 
 For the pinned source delivery, download `volt_1.0.2_source.zip` and its checksums from the [1.0.2 release](https://github.com/agammann/volt-webmcp/releases/tag/v1.0.2). Verify SHA256 before extracting: PowerShell `Get-FileHash volt_1.0.2_source.zip -Algorithm SHA256`, or Linux `sha256sum -c SHA256SUMS`. Enter the extracted `volt-1.0.2` directory, run `pnpm install --frozen-lockfile`, then `pnpm dev`.
 
