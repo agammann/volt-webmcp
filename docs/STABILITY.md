@@ -4,7 +4,7 @@
 
 Volt 1.0.2 explores fictional energy, charging-time and electricity-cost tradeoffs for four generic vehicle profiles, six sample stations and the fixed 387-mile Los Angeles to San Francisco corridor. `volt-energy-v1` is the documented deterministic model. Its current equations, constants, scoring objectives and rounding rules are part of this bounded v1 contract. It supplies no actual route directions, station availability, connector compatibility or dependable driving ETA.
 
-The source requires Node.js 24+ and pnpm 11.19.0. The source targets Windows and Linux; release CI checks Linux, and local acceptance checks Windows. Ordinary Chrome 155.0.8059.39 was measured on Windows; manual controls also remain available when WebMCP is absent. The optional native integration is experimental and limited to the browser/API combinations actually measured. Historical Chrome/Edge 154 records are dated in the README; Chrome 155 uses object arguments. A different host needs its own native check.
+The source requires Node.js 24.x or 26+ and pnpm 11.19.0. The source targets Windows and Linux; release CI checks Linux, and local acceptance checks Windows. Ordinary Chrome 155.0.8059.39 was measured on Windows; manual controls also remain available when WebMCP is absent. The optional native integration is experimental and limited to the browser/API combinations actually measured. Historical Chrome/Edge 154 records are dated in the README; Chrome 155 uses object arguments. A different host needs its own native check.
 
 ## Saved settings and export
 
