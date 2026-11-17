@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.4
+
+November 16, 2026
+
+- Update Vite from 8.2.4 to 8.3.7 with patched Rolldown for [GHSA-p4f5-76q4-ffq7](https://github.com/vitejs/vite/security/advisories/GHSA-p4f5-76q4-ffq7). The affected condition is a development server explicitly exposed to the network, not the deployed static Worker; the default development binding remains loopback.
+- Point installation and recovery guidance to the matching source delivery and preserve previous release assets and dated verification.
+- Retain the fictional simulator model, interface, seven WebMCP contracts, local saved settings and existing HTML/asset response policies.
+
 ## 1.0.3
 
 November 16, 2026
