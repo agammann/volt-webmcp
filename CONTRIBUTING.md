@@ -1,6 +1,6 @@
 # Contributing
 
-Use Node.js 24+ and pnpm 11.19.0. Install with `pnpm install --frozen-lockfile`, then follow the verification commands in [README.md](README.md). Python 3.11+ is needed only for the release ZIP verification helper.
+Use Node.js 24.x or 26+ and pnpm 11.19.0. Install with `pnpm install --frozen-lockfile`, then follow the verification commands in [README.md](README.md). Python 3.11+ is needed only for the release ZIP verification helper.
 
 Keep changes inside the documented fictional simulator scope. `src/planner.ts` owns the deterministic model; tools and manual controls share it. Check numerical changes against independent arithmetic and update the model version, fixtures and explanation together. Avoid real-world availability, navigation, compatibility or price claims without a separately verified data source.
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.3
+
+November 16, 2026
+
+- Deliver the current dependency updates and CI artifact checks under a new patch version so the published source matches the verified checkout.
+- Align contributor setup with the supported Node.js 24.x or 26+ engines.
+- Verify the clean source on Windows with 32 unit tests, nine ordinary browser tests, four native Edge WebMCP tests and a dependency audit with no reported advisories. The fictional calculation model, seven-tool contract and saved settings are unchanged.
+
 ## 1.0.2
 
 October 7, 2026
